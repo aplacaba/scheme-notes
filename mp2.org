@@ -1,0 +1,42 @@
+#+begin_src scheme :results output
+(define (print val)
+  (display val)
+  (display "\n"))
+
+(define (annual-po-mp2 yr pct initial-amt)
+  (define total (+ initial-amt
+                   (* pct initial-amt)))
+  (if (= yr 0)
+      0
+      (+ total
+         (annual-po-mp2
+           (- yr 1)
+           pct
+           initial-amt))))
+
+(define (compound-mp2 yr pct initial-amt)
+  (define total (+ initial-amt
+                   (* pct initial-amt)))
+
+  (if (= yr 0)
+      0
+      (+ total
+         (compound-mp2
+           (- yr 1)
+           pct
+           total))))
+
+;; Parameters
+;; 5 yr annual payout
+;; 500_000 annual contribution
+(print (annual-po-mp2 5 0.076 500000))
+
+;; Parameters
+;; 5 yr compounded with a dividend rate of 7.5%
+;; 500_000 annual contribution
+(print (compound-mp2 5 .075 500000))
+#+end_src
+
+#+RESULTS:
+: 2690000.0
+: 3122010.1708984375
