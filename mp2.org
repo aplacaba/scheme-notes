@@ -3,33 +3,35 @@
   (display val)
   (display "\n"))
 
-(define (annual-po-mp2 yr pct initial-amt)
+(define (mp2-compute yr reducer pct initial-amt next-amt-proc)
   (define total (+ initial-amt
                    (* pct initial-amt)))
   (if (= yr 0)
       0
       (+ total
-         (annual-po-mp2
-           (- yr 1)
+         (mp2-compute
+           (reducer yr)
+           reducer
            pct
-           initial-amt))))
+           (next-amt-proc initial-amt)
+           next-amt-proc))))
+
+(define (annual-mp2 yr pct initial-amt)
+  (define (reducer x) (- x 1))
+  (define (next-amt-proc x) x)
+  (mp2-compute yr reducer pct initial-amt next-amt-proc))
 
 (define (compound-mp2 yr pct initial-amt)
-  (define total (+ initial-amt
-                   (* pct initial-amt)))
-
-  (if (= yr 0)
-      0
-      (+ total
-         (compound-mp2
-           (- yr 1)
-           pct
-           total))))
+  (define (reducer x) (- x 1))
+  (define (next-amt-proc initial)
+    (+ initial
+       (* pct initial)))
+  (mp2-compute yr reducer pct initial-amt next-amt-proc))
 
 ;; Parameters
 ;; 5 yr annual payout
 ;; 500_000 annual contribution
-(print (annual-po-mp2 5 0.076 500000))
+(print (annual-mp2 5 .075 500000))
 
 ;; Parameters
 ;; 5 yr compounded with a dividend rate of 7.5%
@@ -38,5 +40,5 @@
 #+end_src
 
 #+RESULTS:
-: 2690000.0
+: 2687500.0
 : 3122010.1708984375
